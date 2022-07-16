@@ -1,6 +1,7 @@
 package com.gk.test.framework.helpers;
 
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -19,8 +20,14 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.logging.Level;
 
 public abstract class WebDriverHelper extends EventFiringWebDriver {
@@ -45,6 +52,8 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
     private static Integer BROWSER_WINDOW_WIDTH;
     private static Integer BROWSER_WINDOW_HEIGHT;
 
+    private static Cookie seleniumCookie;
+
     static {
         Props.loadRunConfigProps("/environment.properties");
         SELENIUM_HOST = Props.getProp("driverhost");
@@ -63,9 +72,12 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
             System.setProperty("webdriver.ie.driver", getDriverPath());
             System.setProperty("phantomjs.binary.path", getDriverPath());
 
-
         }
-
+       /* try {
+            storeCookiedata(Props.getProp("site.url"));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }*/
         try {
             switch (BROWSER.toLowerCase()) {
                 case ("chrome"):
@@ -279,5 +291,22 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
                     "You shouldn't close this WebDriver. It's shared and will close when the JVM exits.");
         }
         super.close();
+    }
+
+    private static void storeCookiedata(String url) throws ParseException {
+        HttpCookie cookie=HttpCookie.parse(url).stream().findFirst().orElseThrow(() -> new ParseException("Cookie not found",0));
+        seleniumCookie= new Cookie(cookie.getName(),cookie.getValue(), cookie.getDomain(),cookie.getPath(),getCookieExpiryDate(cookie));
+    }
+
+    private static Date getCookieExpiryDate(HttpCookie cookie){
+        LocalDateTime time=LocalDateTime.now();
+        if(cookie.getMaxAge()==-1){
+            return toDate(time.plus(1, ChronoUnit.DAYS));
+        }else{
+            return toDate(time.plus(cookie.getMaxAge(),ChronoUnit.SECONDS));
+        }
+    }
+    private static Date toDate(LocalDateTime time){
+        return Date.from(time.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

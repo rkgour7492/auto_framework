@@ -436,5 +436,32 @@ public abstract class PageObject {
 
     }
 
+    protected boolean verifyIfElementPresent(By by) {
+        try {
+            WebDriverWait wait = new WebDriverWait(getWebDriver(), 20);
+            wait.until(visibilityOfElementLocated(by));
+            return true;
+        } catch (TimeoutException timeoutException) {
+            return false;
+        }
+    }
 
+    protected void hoverOver(WebElement element) {
+        Actions actions = new Actions(getWebDriver());
+        actions.moveToElement(element).perform();
+    }
+
+    protected boolean waitForAttribute(By element, String attributeName, String value) {
+        try {
+            WebDriverWait webDriverWait = new WebDriverWait(getWebDriver(), 10);
+            webDriverWait.until((ExpectedCondition<Boolean>) driver -> {
+                WebElement flyout = driver.findElement(element);
+                String valueOfAttribute = flyout.getAttribute(attributeName);
+                return valueOfAttribute.contains(value);
+            });
+        } catch (TimeoutException exception) {
+            return false;
+        }
+        return true;
+    }
 }
