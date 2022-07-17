@@ -1,6 +1,7 @@
 package com.gk.test.framework.helpers;
 
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -45,6 +46,8 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
     private static Integer BROWSER_WINDOW_WIDTH;
     private static Integer BROWSER_WINDOW_HEIGHT;
 
+    private static Cookie seleniumCookie;
+
     static {
         Props.loadRunConfigProps("/environment.properties");
         SELENIUM_HOST = Props.getProp("driverhost");
@@ -63,9 +66,7 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
             System.setProperty("webdriver.ie.driver", getDriverPath());
             System.setProperty("phantomjs.binary.path", getDriverPath());
 
-
         }
-
         try {
             switch (BROWSER.toLowerCase()) {
                 case ("chrome"):
@@ -280,4 +281,5 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
         }
         super.close();
     }
+
 }
