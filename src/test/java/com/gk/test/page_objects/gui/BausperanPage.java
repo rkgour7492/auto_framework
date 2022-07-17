@@ -1,6 +1,7 @@
 package com.gk.test.page_objects.gui;
 
 import com.gk.test.framework.PageObject;
+import com.gk.test.framework.helpers.BausparenConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -19,19 +20,13 @@ public class BausperanPage extends PageObject {
     private By searchBox = By.id("search--input-header");
     private By hoverOverDropdownMenuItems = By.xpath("//a[@class='dropdown-toggle']");
     private By flyout = By.xpath("//a[@class='dropdown-toggle']/following-sibling::div[contains(@class,'open')]");
-    private By bausparenHoverOverMenu = By.xpath("//a[@class and contains(text(),'Bausparen')]");
-    private By finanzierenHoverOverMenu = By.xpath("//a[@class and contains(text(),'Finanzieren')]");
-    private By rechnerenHoverOverMenu = By.xpath("//a[@class and contains(text(),'Rechner')]");
-    private By servicesHoverOverMenu = By.xpath("//a[@class and contains(text(),'Services')]");
-    private By meineWohnweltHoverOverMenu = By.xpath("//a[@class and contains(text(),'Meine Wohnwelt')]");
-    private By kontaktHoverOverMenu = By.xpath("//a[@class and contains(text(),'Kontakt')]");
-    private By pageImage1 = By.xpath("//img[@alt='Modernes Wohnzimmer']");
+
     private By bausparenHeaderText = By.xpath("//h1[text()='Bausparen']");
     private By downloadPDFButton = By.xpath("//*[text()='Download Produktinfos']/parent::a");
     private By slickArrowPrev = By.xpath("//button[contains(@class,'prev')]");
     private By slickArrowNext = By.xpath("//button[contains(@class,'next')]");
     private By slickButton = By.xpath("//li[not(contains(@class,'slick'))]//button[contains(@id,'slick')]");
-    private By video = By.tagName("video");
+    private By video = By.xpath("//video[@class]/parent::div[@id]");
     private By playVideoButton = By.xpath("//button[@title='Play Video']");
     private By contentExpander = By.xpath("//span[contains(text(),'Einlagensicherung')]//parent::a");
     private By contentWrapper = By.xpath("//span[contains(text(),'Schliessen')]//parent::a");
@@ -45,13 +40,6 @@ public class BausperanPage extends PageObject {
     private By errorMessage = By.xpath("//ul[contains(@class,'parsley-errors')]//li");
     private By successMessage = By.xpath("//div[contains(@class,'newsletter-subscription-success')]//p");
 
-    //    private By allProductOptions = By.xpath("//div[(contains(@class,'slick-active') or @class='slick-slide') and @role]//h3");
-   /* private By getProductHyperlink(String... productName) {
-        if (productName.length <= 0) {
-            productName[0] = "";
-        }
-        return By.xpath("//div[contains(@class,'slick-active') and @role]//a[contains(@class,'btn') and contains(@href,'" + productName[0] + "+']");
-    }*/
 
     private By getHoverOverDropdownMenu(String menuName) {
         return By.xpath("//a[@class and contains(text(),'" + menuName + "')]");
@@ -72,7 +60,8 @@ public class BausperanPage extends PageObject {
         waitForExpectedElement(searchBox).sendKeys(Keys.ENTER);
     }
 
-    public void isSearchBoxPresent() {
+    public void isSearchBoxPresent() throws InterruptedException {
+        scrollToTop(searchBox);
         Assert.assertTrue(verifyIfElementPresent(searchBox), "Search Box is not present");
     }
 
@@ -84,17 +73,12 @@ public class BausperanPage extends PageObject {
         Assert.assertEquals(getTextListFromWebelementsList(hoverOverDropdownMenuItems), expectedList);
     }
 
-    public String getImageBase64Code() {
-        return element(pageImage1).getAttribute("src").split(",")[1];
-    }
-
     public String getSRC(String imageName) {
         switch (imageName) {
-            case "Logo Raiffeisen Bausparkasse":
-                return element(logoImage).getAttribute("src");
-            case "Download Produktinfos":
-                return element(downloadPDFButton).getAttribute("href");
-
+            case BausparenConstants.LOGO_RAIFFEISEN_BAUSPARKASSE:
+                return element(logoImage).getAttribute(BausparenConstants.ATTRIBUTE_SRC);
+            case BausparenConstants.DOWNLOAD_PRODUKTINFOS:
+                return element(downloadPDFButton).getAttribute(BausparenConstants.ATTRIBUTE_HREF);
         }
         return null;
     }
@@ -139,11 +123,6 @@ public class BausperanPage extends PageObject {
         Assert.assertNotEquals(afterPrev, afterNext);
     }
 
-    private List<String> getTextListFromWebelementsList(By by) {
-        List<String> list = new ArrayList<>();
-        visibilityOfAllElementsLocatedBy(by).forEach(element -> list.add(element.getText()));
-        return list;
-    }
 
     public void verifyUnsereProductsAvailable(List<String> expected) {
         List<String> list1 = getTextListFromWebelementsList(draggableSlickOptions);
@@ -165,7 +144,7 @@ public class BausperanPage extends PageObject {
     }
 
     public void verifyAttributeOfPlaying() {
-        Assert.assertTrue(waitForExpectedElement(video).getAttribute("class").contains("vjs-playing"));
+        Assert.assertTrue(waitForExpectedElement(video).getAttribute(BausparenConstants.ATTRIBUTE_CLASS).contains(BausparenConstants.ATTRIBUTE_CLASS_VALUE_PLAYING));
     }
 
     public void verifyFlyout() {

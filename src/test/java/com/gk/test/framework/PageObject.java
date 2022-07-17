@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PageObject {
@@ -451,17 +452,16 @@ public abstract class PageObject {
         actions.moveToElement(element).perform();
     }
 
-    protected boolean waitForAttribute(By element, String attributeName, String value) {
-        try {
-            WebDriverWait webDriverWait = new WebDriverWait(getWebDriver(), 10);
-            webDriverWait.until((ExpectedCondition<Boolean>) driver -> {
-                WebElement flyout = driver.findElement(element);
-                String valueOfAttribute = flyout.getAttribute(attributeName);
-                return valueOfAttribute.contains(value);
-            });
-        } catch (TimeoutException exception) {
-            return false;
-        }
-        return true;
+    protected List<String> getTextListFromWebelementsList(By by) {
+        List<String> list = new ArrayList<>();
+        visibilityOfAllElementsLocatedBy(by).forEach(element -> list.add(element.getText()));
+        return list;
+    }
+
+
+    protected void scrollToTop(By by) throws InterruptedException {
+        WebElement element = element(by);
+        ((JavascriptExecutor) getWebDriver()).executeScript("window.scrollTo(0,0)");
+        Thread.sleep(3000);
     }
 }

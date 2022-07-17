@@ -1,10 +1,10 @@
+@bausparen
 Feature: As a user
   I want to able to use Bausparen and its products
 
 
   Background: launch website
     Given i navigate to the website Bausparen portal
-
 
   Scenario Outline: Verify error message on entering invalid email i
     When i enter invalid value "<invalid>" in the field
@@ -16,7 +16,6 @@ Feature: As a user
       | abcdef434    |
       | ram@.com     |
       | ramgmail.com |
-
 
   Scenario: Verify Search function
     When verify search box input field is present
@@ -32,11 +31,6 @@ Feature: As a user
   Scenario: Verify logo in the page is present and not broken
     When logo is present
     And I perform GET request for "Logo Raiffeisen Bausparkasse"
-    Then verify image is not broken with 200 status code
-
-  @pending
-  Scenario: Verify logo in the page is present and not broken
-    And perform GET request on image
     Then verify image is not broken with 200 status code
 
 
@@ -72,8 +66,9 @@ Feature: As a user
     And verify PDF file is available for download with response 200
 
 
-  @bausparen
   Scenario: Verify email is succesfully sent and received after click on Absenden
     When I enter valid email "abcdef@gmail.com"
     And i click on Absenden
     Then verify email sent success message as "Vielen Dank. Sie erhalten in Kürze eine E-Mail mit einem Link um Ihre Anmeldung zu den WOHNWELT News zu bestätigen."
+
+

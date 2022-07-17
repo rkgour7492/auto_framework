@@ -23,7 +23,7 @@ public class BausparenSteps {
     }
 
     @And("verify search box input field is present")
-    public void verifySearchBoxInputFieldIsPresent() {
+    public void verifySearchBoxInputFieldIsPresent() throws InterruptedException {
         bausperanPage.isSearchBoxPresent();
     }
 

@@ -16,13 +16,6 @@ public class ImageAndPDFSteps extends ApiHelper {
     public ImageAndPDFSteps(BausperanPage bausperanPage){
         this.bausperanPage=bausperanPage;
     }
-    @And("perform GET request on image")
-    public void perform_GET_request_on_image(){
-        String code=bausperanPage.getImageBase64Code();
-        String url=Base64Decoder.decodeBase64ImageToUrl(code);
-        response=Api.getList(url);
-    }
-
     @Then("verify image is not broken with {int} status code")
     public void verifyImageIsNotBrokenWithStatusCode(int expectedStatusCode) {
         assertThat(response.statusCode()).isEqualTo(expectedStatusCode);

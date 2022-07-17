@@ -20,14 +20,8 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.logging.Level;
 
 public abstract class WebDriverHelper extends EventFiringWebDriver {
@@ -73,11 +67,6 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
             System.setProperty("phantomjs.binary.path", getDriverPath());
 
         }
-       /* try {
-            storeCookiedata(Props.getProp("site.url"));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }*/
         try {
             switch (BROWSER.toLowerCase()) {
                 case ("chrome"):
@@ -293,20 +282,4 @@ public abstract class WebDriverHelper extends EventFiringWebDriver {
         super.close();
     }
 
-    private static void storeCookiedata(String url) throws ParseException {
-        HttpCookie cookie=HttpCookie.parse(url).stream().findFirst().orElseThrow(() -> new ParseException("Cookie not found",0));
-        seleniumCookie= new Cookie(cookie.getName(),cookie.getValue(), cookie.getDomain(),cookie.getPath(),getCookieExpiryDate(cookie));
-    }
-
-    private static Date getCookieExpiryDate(HttpCookie cookie){
-        LocalDateTime time=LocalDateTime.now();
-        if(cookie.getMaxAge()==-1){
-            return toDate(time.plus(1, ChronoUnit.DAYS));
-        }else{
-            return toDate(time.plus(cookie.getMaxAge(),ChronoUnit.SECONDS));
-        }
-    }
-    private static Date toDate(LocalDateTime time){
-        return Date.from(time.atZone(ZoneId.systemDefault()).toInstant());
-    }
 }
